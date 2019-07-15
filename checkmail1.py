@@ -20,22 +20,6 @@ def color(col):
 	if col == 'end':
 		return '\033[0m'
 
-def mailru_session():
-	global email_inp, reg_id
-	sess_url = 'https://e.mail.ru/signup?from=main_noc'
-	response = requests.get(sess_url, timeout = 3, stream = False, verify = False, headers = headers)
-	soup = BeautifulSoup(response.content, "html.parser")
-	email_inp = soup.find_all('span',{'class':'sig2 tal pRel'})[0].contents[1].get('name')
-	reg_id = soup.find_all('input',{'name':'x_reg_id'})[0].get('value')
-
-def mailru_check(mailru_domain):
-	check_url = 'https://e.mail.ru/cgi-bin/checklogin'
-	payload = 'RegistrationDomain='+mailru_domain+'&'+email_inp+'='+email+'&'+'x_reg_id='+reg_id
-	req = requests.post(check_url, data = payload, timeout = 3, stream = False, verify = False, headers = headers)
-	resp_dict = {'EX_USEREXIST': color('red')+'[-] Email is already use!'+color('end'), '0': color('green')+'[+] Email is available!'+color('end'), '109': color('magenta')+'[X] Error! (maybe reg_id is not correct)'+color('end'), 'EX_INVALIDUSERNAME': color('magenta')+'[X] Error! (invalid username)'+color('end'), '108': color('magenta')+'[X] Error! (banned)'+color('end')}
-	status = resp_dict.get(req.content)
-	print u'{0:34} Domain: {1:10}'.format(status,mailru_domain)
-
 def yandex_session():
 	global track_id
 	headers['x-requested-with'] = 'XMLHttpRequest'
